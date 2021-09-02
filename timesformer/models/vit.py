@@ -300,9 +300,9 @@ class VisionTransformer(nn.Module):
         return x[:, 0]
 
     def forward(self, x):
-        x = self.forward_features(x)
-        x = self.head(x)
-        return x
+        x1 = self.forward_features(x)
+        x = self.head(x1)
+        return x, x1
 
 def _conv_filter(state_dict, patch_size=16):
     """ convert patch embedding weight from manual patchify + linear proj to conv"""
@@ -347,5 +347,5 @@ class TimeSformer(nn.Module):
         if self.pretrained:
             load_pretrained(self.model, num_classes=self.model.num_classes, in_chans=kwargs.get('in_chans', 3), filter_fn=_conv_filter, img_size=img_size, num_frames=num_frames, num_patches=self.num_patches, attention_type=self.attention_type, pretrained_model=pretrained_model)
     def forward(self, x):
-        x = self.model(x)
-        return x
+        x, x1 = self.model(x)
+        return x, x1
